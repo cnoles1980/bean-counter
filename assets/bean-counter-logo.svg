@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">Bean Counter logo</title>
+  <desc id="desc">A coffee cup, counting beads, and a dollar mark for tracking coffee savings.</desc>
+  <rect width="512" height="512" rx="96" fill="rgb(248, 244, 225)" />
+  <circle cx="256" cy="258" r="174" fill="rgb(255, 252, 238)" stroke="rgb(175, 143, 111)" stroke-width="14" />
+  <path d="M152 204h184v92c0 51-41 92-92 92s-92-41-92-92v-92Z" fill="rgb(248, 244, 225)" stroke="rgb(84, 51, 16)" stroke-width="24" stroke-linejoin="round" />
+  <path d="M336 230h30c31 0 56 25 56 56s-25 56-56 56h-30" fill="none" stroke="rgb(84, 51, 16)" stroke-width="24" stroke-linecap="round" />
+  <path d="M190 157c0-24 28-24 28-54M266 157c0-24 28-24 28-54" fill="none" stroke="rgb(116, 81, 45)" stroke-width="18" stroke-linecap="round" />
+  <path d="M151 208h184" stroke="rgb(116, 81, 45)" stroke-width="18" stroke-linecap="round" />
+  <path d="M159 411h168" stroke="rgb(84, 51, 16)" stroke-width="22" stroke-linecap="round" />
+  <path d="M122 119h268" stroke="rgb(84, 51, 16)" stroke-width="14" stroke-linecap="round" />
+  <circle cx="177" cy="119" r="24" fill="rgb(175, 143, 111)" stroke="rgb(84, 51, 16)" stroke-width="10" />
+  <circle cx="256" cy="119" r="24" fill="rgb(116, 81, 45)" stroke="rgb(84, 51, 16)" stroke-width="10" />
+  <circle cx="335" cy="119" r="24" fill="rgb(175, 143, 111)" stroke="rgb(84, 51, 16)" stroke-width="10" />
+  <text x="256" y="327" text-anchor="middle" font-family="Georgia, serif" font-size="126" font-weight="700" fill="rgb(84, 51, 16)">$</text>
+</svg>

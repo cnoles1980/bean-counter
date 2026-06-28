@@ -223,6 +223,7 @@ function render() {
   const today = new Intl.DateTimeFormat(undefined, { month: "short", day: "numeric" }).format(new Date());
 
   setText("#netTotal", formatMoney(summary.net));
+  setText("#coffeeSkippedTotal", summary.cups.toString());
   setText("#cupCount", `${summary.cups} coffee ${plural(summary.cups, "run")} skipped`);
   setText("#streakCount", `${summary.streak} ${plural(summary.streak, "day")} streak`);
   setText("#grossTotal", formatMoney(summary.gross));
@@ -232,7 +233,7 @@ function render() {
   setText("#progressCopy", progress.copy);
   setText("#bragDate", today);
   setText("#bragValue", formatMoney(summary.net));
-  setText("#bragLine", `${summary.cups} coffee ${plural(summary.cups, "run")} skipped`);
+  setText("#bragLine", `${summary.cups} ${plural(summary.cups, "coffee")} skipped`);
   setText("#bragGross", `${formatMoney(summary.gross)} avoided`);
   setText("#bragBadges", `${summary.unlocked.length} ${plural(summary.unlocked.length, "badge")}`);
   setText("#machinePercent", `${Math.round(summary.machinePercent)}%`);
@@ -320,6 +321,7 @@ function downloadBragShot() {
 
   ctx.fillStyle = palette.cream;
   ctx.fillRect(0, 0, canvas.width, canvas.height);
+  drawReceiptPattern(ctx, palette);
   ctx.fillStyle = palette.paper;
   roundRect(ctx, 86, 92, 908, 896, 34);
   ctx.fill();
@@ -327,25 +329,28 @@ function downloadBragShot() {
   ctx.lineWidth = 4;
   ctx.stroke();
 
+  drawLogoMark(ctx, 140, 142, 118, palette);
+
   ctx.fillStyle = palette.espresso;
-  ctx.font = "800 54px Arial";
-  ctx.fillText("Bean Counter", 138, 190);
+  ctx.font = "800 58px Arial";
+  ctx.fillText("Bean Counter", 286, 176);
 
   ctx.fillStyle = palette.coffee;
   ctx.font = "800 34px Arial";
-  ctx.fillText("net kept", 138, 246);
+  ctx.fillText("net savings", 286, 230);
 
   ctx.font = "700 172px Georgia";
   ctx.fillStyle = palette.espresso;
-  ctx.fillText(formatMoney(summary.net), 138, 430);
+  ctx.fillText(formatMoney(summary.net), 138, 450);
 
   ctx.fillStyle = palette.coffee;
   ctx.font = "800 48px Arial";
-  ctx.fillText(`${summary.cups} coffee ${plural(summary.cups, "run")} skipped`, 138, 525);
+  ctx.fillText(`${summary.cups} coffees skipped`, 138, 548);
 
-  drawPill(ctx, 138, 625, `${formatMoney(summary.gross)} café tab avoided`, palette);
-  drawPill(ctx, 138, 715, `${summary.unlocked.length}/${achievements.length} badges unlocked`, palette);
-  drawPill(ctx, 138, 805, `${summary.streak} ${plural(summary.streak, "day")} streak`, palette);
+  drawPill(ctx, 138, 648, `${formatMoney(summary.gross)} café tab avoided`, palette);
+  drawPill(ctx, 138, 738, `${summary.unlocked.length}/${achievements.length} badges unlocked`, palette);
+  drawPill(ctx, 138, 828, `${summary.streak} ${plural(summary.streak, "day")} streak`, palette);
+  drawBeans(ctx, 796, 696, palette);
 
   ctx.fillStyle = palette.tan;
   ctx.font = "800 34px Arial";
@@ -360,7 +365,7 @@ function downloadBragShot() {
 
 async function shareBragText() {
   const summary = summarize();
-  const text = `Bean Counter: ${summary.cups} coffee ${plural(summary.cups, "run")} skipped, ${formatMoney(summary.net)} net kept.`;
+  const text = `Bean Counter: ${summary.cups} coffees skipped, ${formatMoney(summary.net)} net savings.`;
 
   if (navigator.share) {
     try {
@@ -392,6 +397,89 @@ function drawPill(ctx, x, y, text, palette) {
   ctx.fillStyle = palette.espresso;
   ctx.font = "800 34px Arial";
   ctx.fillText(text, x + 30, y - 4);
+}
+
+function drawReceiptPattern(ctx, palette) {
+  ctx.save();
+  ctx.globalAlpha = 0.34;
+  ctx.fillStyle = palette.tan;
+  for (let y = 52; y < 1080; y += 132) {
+    for (let x = 44; x < 1080; x += 188) {
+      ctx.beginPath();
+      ctx.ellipse(x, y, 24, 12, -0.72, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+  ctx.restore();
+}
+
+function drawLogoMark(ctx, x, y, size, palette) {
+  const center = size / 2;
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.fillStyle = palette.cream;
+  roundRect(ctx, 0, 0, size, size, 24);
+  ctx.fill();
+  ctx.strokeStyle = palette.espresso;
+  ctx.lineWidth = 7;
+  ctx.stroke();
+
+  ctx.strokeStyle = palette.espresso;
+  ctx.lineWidth = 5;
+  ctx.beginPath();
+  ctx.moveTo(22, 30);
+  ctx.lineTo(size - 22, 30);
+  ctx.stroke();
+
+  [34, center, size - 34].forEach((beadX, index) => {
+    ctx.fillStyle = index === 1 ? palette.coffee : palette.tan;
+    ctx.beginPath();
+    ctx.arc(beadX, 30, 10, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+  });
+
+  ctx.fillStyle = palette.paper;
+  ctx.strokeStyle = palette.espresso;
+  ctx.lineWidth = 7;
+  roundRect(ctx, 28, 46, 52, 42, 12);
+  ctx.fill();
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.arc(84, 65, 14, -Math.PI / 2, Math.PI / 2);
+  ctx.stroke();
+
+  ctx.fillStyle = palette.espresso;
+  ctx.font = "700 42px Georgia";
+  ctx.textAlign = "center";
+  ctx.fillText("$", 54, 83);
+  ctx.restore();
+}
+
+function drawBeans(ctx, x, y, palette) {
+  ctx.save();
+  ctx.translate(x, y);
+  [
+    [0, 0, -0.65],
+    [62, 48, 0.58],
+    [16, 108, -0.12],
+  ].forEach(([beanX, beanY, angle]) => {
+    ctx.save();
+    ctx.translate(beanX, beanY);
+    ctx.rotate(angle);
+    ctx.fillStyle = "rgba(116, 81, 45, 0.28)";
+    ctx.beginPath();
+    ctx.ellipse(0, 0, 44, 22, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = palette.coffee;
+    ctx.lineWidth = 4;
+    ctx.beginPath();
+    ctx.moveTo(-6, -18);
+    ctx.bezierCurveTo(8, -6, -8, 7, 6, 18);
+    ctx.stroke();
+    ctx.restore();
+  });
+  ctx.restore();
 }
 
 function setText(selector, text) {

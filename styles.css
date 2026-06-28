@@ -74,8 +74,16 @@ button {
 }
 
 .brand-mark {
-  background: var(--espresso);
-  color: var(--cream);
+  overflow: hidden;
+  border: 1px solid rgba(84, 51, 16, 0.22);
+  background: var(--cream);
+  color: var(--espresso);
+}
+
+.brand-mark img {
+  width: 100%;
+  height: 100%;
+  display: block;
 }
 
 svg {
@@ -129,6 +137,18 @@ svg {
   padding: clamp(24px, 4vw, 42px);
 }
 
+.hero-totals {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(170px, 0.34fr);
+  gap: clamp(18px, 3vw, 36px);
+  align-items: end;
+}
+
+.hero-total-cups {
+  border-left: 1px solid var(--line);
+  padding-left: clamp(18px, 3vw, 32px);
+}
+
 .total-label,
 .money-field span,
 .stats-strip span,
@@ -143,6 +163,7 @@ svg {
 }
 
 .net-total,
+.cups-total,
 .brag-value {
   font-family: Georgia, "Times New Roman", serif;
   font-weight: 700;
@@ -152,6 +173,11 @@ svg {
 .net-total {
   margin-top: 10px;
   font-size: clamp(4rem, 12vw, 8.75rem);
+}
+
+.cups-total {
+  margin-top: 10px;
+  font-size: clamp(3.6rem, 8vw, 6.4rem);
 }
 
 .total-meta {
@@ -305,6 +331,55 @@ svg {
   margin-bottom: 14px;
 }
 
+.collapsible-panel {
+  overflow: hidden;
+}
+
+.collapsible-panel > .section-heading {
+  cursor: pointer;
+  list-style: none;
+  margin-bottom: 14px;
+}
+
+.collapsible-panel > .section-heading::-webkit-details-marker {
+  display: none;
+}
+
+.collapsible-panel:not([open]) > .section-heading {
+  margin-bottom: 0;
+}
+
+.collapse-icon {
+  position: relative;
+  width: 30px;
+  height: 30px;
+  flex: 0 0 30px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(248, 244, 225, 0.68);
+}
+
+.collapse-icon::before,
+.collapse-icon::after {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 12px;
+  height: 2px;
+  border-radius: 999px;
+  background: var(--coffee);
+  content: "";
+  transform: translate(-50%, -50%);
+}
+
+.collapse-icon::after {
+  transform: translate(-50%, -50%) rotate(90deg);
+}
+
+.collapsible-panel[open] .collapse-icon::after {
+  opacity: 0;
+}
+
 h1,
 h2 {
   margin: 0;
@@ -315,6 +390,11 @@ h2 {
 .section-heading span {
   color: var(--coffee);
   font-weight: 850;
+}
+
+.section-heading h1,
+.section-heading h2 {
+  flex: 1;
 }
 
 .achievement-grid {
@@ -405,6 +485,8 @@ h2 {
 }
 
 .brag-card {
+  position: relative;
+  overflow: hidden;
   border-radius: 8px;
   background:
     linear-gradient(135deg, rgba(255, 252, 238, 0.9), rgba(175, 143, 111, 0.22)),
@@ -412,6 +494,31 @@ h2 {
   border: 1px solid rgba(84, 51, 16, 0.24);
   padding: 22px;
   min-height: 250px;
+}
+
+.brag-card::after {
+  position: absolute;
+  right: -44px;
+  bottom: -54px;
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  background: rgba(175, 143, 111, 0.15);
+  content: "";
+}
+
+.brag-logo {
+  position: relative;
+  z-index: 1;
+  width: 58px;
+  height: 58px;
+  margin-bottom: 14px;
+}
+
+.brag-logo img {
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 
 .machine-cost-field input {
@@ -454,21 +561,29 @@ h2 {
 }
 
 .brag-kicker {
+  position: relative;
+  z-index: 1;
   color: var(--espresso);
 }
 
 .brag-value {
+  position: relative;
+  z-index: 1;
   margin-top: 16px;
   font-size: clamp(3.2rem, 12vw, 5.7rem);
 }
 
 .brag-line {
+  position: relative;
+  z-index: 1;
   margin-top: 12px;
   color: var(--coffee);
   font-weight: 850;
 }
 
 .brag-stats {
+  position: relative;
+  z-index: 1;
   flex-wrap: wrap;
   gap: 8px;
   margin-top: 24px;
@@ -528,6 +643,17 @@ h2 {
     min-height: auto;
   }
 
+  .hero-totals {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-total-cups {
+    border-left: 0;
+    border-top: 1px solid var(--line);
+    padding-left: 0;
+    padding-top: 18px;
+  }
+
   .achievement-grid {
     grid-template-columns: 1fr;
   }
@@ -574,6 +700,10 @@ h2 {
 
   .net-total {
     font-size: 3.7rem;
+  }
+
+  .cups-total {
+    font-size: 3.3rem;
   }
 }
 

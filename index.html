@@ -6,8 +6,8 @@
     <meta name="theme-color" content="#f8f4e1" />
     <title>Bean Counter</title>
     <link rel="manifest" href="./manifest.webmanifest" />
-    <link rel="icon" href="./assets/coffee-saved.svg" type="image/svg+xml" />
-    <link rel="apple-touch-icon" href="./assets/coffee-saved.svg" />
+    <link rel="icon" href="./assets/bean-counter-logo.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="./assets/bean-counter-apple-touch.png" />
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
@@ -15,11 +15,7 @@
       <header class="topbar">
         <a class="brand" href="./" aria-label="Bean Counter home">
           <span class="brand-mark" aria-hidden="true">
-            <svg viewBox="0 0 32 32" role="img">
-              <path d="M8 11h14v7.5A6.5 6.5 0 0 1 15.5 25h-1A6.5 6.5 0 0 1 8 18.5V11Z" />
-              <path d="M22 13h2.5a3.5 3.5 0 0 1 0 7H22" />
-              <path d="M11 7c0-1.5 1.8-1.5 1.8-3M16 7c0-1.5 1.8-1.5 1.8-3" />
-            </svg>
+            <img src="./assets/bean-counter-logo.svg" alt="" />
           </span>
           <span>Bean Counter</span>
         </a>
@@ -36,8 +32,16 @@
 
       <section class="hero-grid" aria-label="Savings summary">
         <div class="total-panel">
-          <div class="total-label">Net kept</div>
-          <div class="net-total" id="netTotal">$0.00</div>
+          <div class="hero-totals">
+            <div class="hero-total hero-total-money">
+              <div class="total-label">Net Savings</div>
+              <div class="net-total" id="netTotal">$0.00</div>
+            </div>
+            <div class="hero-total hero-total-cups">
+              <div class="total-label">Coffees Skipped</div>
+              <div class="cups-total" id="coffeeSkippedTotal">0</div>
+            </div>
+          </div>
           <div class="total-meta">
             <span id="cupCount">0 coffee runs skipped</span>
             <span id="streakCount">0 day streak</span>
@@ -94,20 +98,22 @@
       </section>
 
       <section class="content-grid">
-        <div class="achievement-section">
-          <div class="section-heading">
+        <details class="achievement-section collapsible-panel" open>
+          <summary class="section-heading">
             <h1>Achievement Library</h1>
             <span id="achievementCount">0/0</span>
-          </div>
+            <span class="collapse-icon" aria-hidden="true"></span>
+          </summary>
           <div class="achievement-grid" id="achievementGrid"></div>
-        </div>
+        </details>
 
         <div class="side-stack">
-          <aside class="data-panel" aria-label="Your Data">
-            <div class="section-heading">
+          <details class="data-panel collapsible-panel" open>
+            <summary class="section-heading">
               <h2>Your Data</h2>
               <span>Local only</span>
-            </div>
+              <span class="collapse-icon" aria-hidden="true"></span>
+            </summary>
             <p>Bean Counter saves only in this browser. We do not collect, sync, or retain your coffee data.</p>
             <div class="data-actions">
               <button class="secondary-button text-button" id="exportButton" type="button">
@@ -128,13 +134,14 @@
               </label>
               <input id="importFile" type="file" accept="application/json,.json" />
             </div>
-          </aside>
+          </details>
 
-          <aside class="machine-panel" aria-label="Espresso Machine Payoff">
-            <div class="section-heading">
+          <details class="machine-panel collapsible-panel" open>
+            <summary class="section-heading">
               <h2>Machine Payoff</h2>
               <span id="machinePercent">0%</span>
-            </div>
+              <span class="collapse-icon" aria-hidden="true"></span>
+            </summary>
             <label class="money-field machine-cost-field">
               <span>Espresso machine</span>
               <input id="machineCost" name="machineCost" type="number" min="0" step="0.01" inputmode="decimal" />
@@ -155,15 +162,19 @@
                 <strong id="machineRunsLeft">0</strong>
               </article>
             </div>
-          </aside>
+          </details>
 
-          <aside class="brag-panel" aria-label="Share Receipt">
-            <div class="section-heading">
+          <details class="brag-panel collapsible-panel" open>
+            <summary class="section-heading">
               <h2>Share Receipt</h2>
               <span id="bragDate"></span>
-            </div>
+              <span class="collapse-icon" aria-hidden="true"></span>
+            </summary>
             <div class="brag-card" id="bragCard">
-              <div class="brag-kicker">Net kept</div>
+              <div class="brag-logo" aria-hidden="true">
+                <img src="./assets/bean-counter-logo.svg" alt="" />
+              </div>
+              <div class="brag-kicker">Net savings</div>
               <div class="brag-value" id="bragValue">$0.00</div>
               <div class="brag-line" id="bragLine">0 coffee runs skipped</div>
               <div class="brag-stats">
@@ -190,7 +201,7 @@
                 Share
               </button>
             </div>
-          </aside>
+          </details>
         </div>
       </section>
     </main>
