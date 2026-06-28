@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title">
+  <title id="title">Bean Counter</title>
+  <rect width="512" height="512" rx="88" fill="rgb(248, 244, 225)" />
+  <circle cx="256" cy="270" r="158" fill="rgba(175, 143, 111, 0.24)" />
+  <path d="M142 184h202v108c0 56-45 101-101 101s-101-45-101-101V184Z" fill="none" stroke="rgb(84, 51, 16)" stroke-width="28" stroke-linejoin="round" />
+  <path d="M344 218h34c35 0 63 28 63 63s-28 63-63 63h-34" fill="none" stroke="rgb(84, 51, 16)" stroke-width="28" stroke-linecap="round" />
+  <path d="M188 130c0-28 34-28 34-62M274 130c0-28 34-28 34-62" fill="none" stroke="rgb(116, 81, 45)" stroke-width="22" stroke-linecap="round" />
+  <path d="M181 426h166" fill="none" stroke="rgb(84, 51, 16)" stroke-width="24" stroke-linecap="round" />
+</svg>

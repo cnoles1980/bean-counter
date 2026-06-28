@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#f8f4e1" />
+    <title>Bean Counter</title>
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <link rel="icon" href="./assets/coffee-saved.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="./assets/coffee-saved.svg" />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <header class="topbar">
+        <a class="brand" href="./" aria-label="Bean Counter home">
+          <span class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 32 32" role="img">
+              <path d="M8 11h14v7.5A6.5 6.5 0 0 1 15.5 25h-1A6.5 6.5 0 0 1 8 18.5V11Z" />
+              <path d="M22 13h2.5a3.5 3.5 0 0 1 0 7H22" />
+              <path d="M11 7c0-1.5 1.8-1.5 1.8-3M16 7c0-1.5 1.8-1.5 1.8-3" />
+            </svg>
+          </span>
+          <span>Bean Counter</span>
+        </a>
+        <button class="icon-button" id="resetButton" type="button" aria-label="Reset tracker">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M4 7h16" />
+            <path d="M10 11v6" />
+            <path d="M14 11v6" />
+            <path d="M6 7l1 13h10l1-13" />
+            <path d="M9 7V4h6v3" />
+          </svg>
+        </button>
+      </header>
+
+      <section class="hero-grid" aria-label="Savings summary">
+        <div class="total-panel">
+          <div class="total-label">Net kept</div>
+          <div class="net-total" id="netTotal">$0.00</div>
+          <div class="total-meta">
+            <span id="cupCount">0 coffee runs skipped</span>
+            <span id="streakCount">0 day streak</span>
+          </div>
+          <div class="progress-wrap" aria-label="Progress to next achievement">
+            <div class="progress-track">
+              <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="progress-copy" id="progressCopy">Log a skipped coffee run to start</div>
+          </div>
+        </div>
+
+        <form class="entry-panel" id="entryForm">
+          <label class="money-field">
+            <span>Usual order</span>
+            <input id="shopPrice" name="shopPrice" type="number" min="0" step="0.01" inputmode="decimal" />
+          </label>
+          <label class="money-field">
+            <span>At-home cost</span>
+            <input id="homeCost" name="homeCost" type="number" min="0" step="0.01" inputmode="decimal" />
+          </label>
+          <div class="entry-actions">
+            <button class="primary-button" type="submit">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M5 12h14" />
+                <path d="M12 5v14" />
+              </svg>
+              Log skipped run
+            </button>
+            <button class="secondary-button" id="addTwoButton" type="button">+2</button>
+            <button class="secondary-button" id="undoButton" type="button" aria-label="Undo last coffee run">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M9 14 4 9l5-5" />
+                <path d="M4 9h10a6 6 0 1 1-4.2 10.2" />
+              </svg>
+            </button>
+          </div>
+        </form>
+      </section>
+
+      <section class="stats-strip" aria-label="Savings details">
+        <article>
+          <span>Café tab avoided</span>
+          <strong id="grossTotal">$0.00</strong>
+        </article>
+        <article>
+          <span>Home brew cost</span>
+          <strong id="homeTotal">$0.00</strong>
+        </article>
+        <article>
+          <span>Average net</span>
+          <strong id="averageNet">$0.00</strong>
+        </article>
+      </section>
+
+      <section class="content-grid">
+        <div class="achievement-section">
+          <div class="section-heading">
+            <h1>Achievement Library</h1>
+            <span id="achievementCount">0/0</span>
+          </div>
+          <div class="achievement-grid" id="achievementGrid"></div>
+        </div>
+
+        <div class="side-stack">
+          <aside class="data-panel" aria-label="Your Data">
+            <div class="section-heading">
+              <h2>Your Data</h2>
+              <span>Local only</span>
+            </div>
+            <p>Bean Counter saves only in this browser. We do not collect, sync, or retain your coffee data.</p>
+            <div class="data-actions">
+              <button class="secondary-button text-button" id="exportButton" type="button">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M12 3v12" />
+                  <path d="m7 10 5 5 5-5" />
+                  <path d="M5 21h14" />
+                </svg>
+                Export backup
+              </button>
+              <label class="secondary-button text-button import-label" for="importFile">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M12 21V9" />
+                  <path d="m7 14 5-5 5 5" />
+                  <path d="M5 3h14" />
+                </svg>
+                Import backup
+              </label>
+              <input id="importFile" type="file" accept="application/json,.json" />
+            </div>
+          </aside>
+
+          <aside class="machine-panel" aria-label="Espresso Machine Payoff">
+            <div class="section-heading">
+              <h2>Machine Payoff</h2>
+              <span id="machinePercent">0%</span>
+            </div>
+            <label class="money-field machine-cost-field">
+              <span>Espresso machine</span>
+              <input id="machineCost" name="machineCost" type="number" min="0" step="0.01" inputmode="decimal" />
+            </label>
+            <div class="machine-meter" aria-label="Espresso machine payoff progress">
+              <div class="progress-track">
+                <div class="progress-fill" id="machineProgressFill"></div>
+              </div>
+              <div class="progress-copy" id="machineProgressCopy">Add your machine cost to track payoff</div>
+            </div>
+            <div class="machine-stats">
+              <article>
+                <span>Remaining</span>
+                <strong id="machineRemaining">$0.00</strong>
+              </article>
+              <article>
+                <span>Runs left</span>
+                <strong id="machineRunsLeft">0</strong>
+              </article>
+            </div>
+          </aside>
+
+          <aside class="brag-panel" aria-label="Share Receipt">
+            <div class="section-heading">
+              <h2>Share Receipt</h2>
+              <span id="bragDate"></span>
+            </div>
+            <div class="brag-card" id="bragCard">
+              <div class="brag-kicker">Net kept</div>
+              <div class="brag-value" id="bragValue">$0.00</div>
+              <div class="brag-line" id="bragLine">0 coffee runs skipped</div>
+              <div class="brag-stats">
+                <span id="bragGross">$0 gross</span>
+                <span id="bragBadges">0 badges</span>
+              </div>
+            </div>
+            <div class="brag-actions">
+              <button class="primary-button" id="downloadButton" type="button">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M12 3v12" />
+                  <path d="m7 10 5 5 5-5" />
+                  <path d="M5 21h14" />
+                </svg>
+                Save PNG
+              </button>
+              <button class="secondary-button" id="shareButton" type="button">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M18 8a3 3 0 1 0-2.8-4" />
+                  <path d="M6 14a3 3 0 1 0 2.8 4" />
+                  <path d="m8.7 13.2 6.6 3.6" />
+                  <path d="m15.3 7.2-6.6 3.6" />
+                </svg>
+                Share
+              </button>
+            </div>
+          </aside>
+        </div>
+      </section>
+    </main>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <script src="./app.js"></script>
+  </body>
+</html>

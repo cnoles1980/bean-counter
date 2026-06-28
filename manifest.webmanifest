@@ -1,0 +1,17 @@
+{
+  "name": "Bean Counter",
+  "short_name": "Bean Counter",
+  "description": "Track the gross and net savings from skipping café coffee.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f8f4e1",
+  "theme_color": "#f8f4e1",
+  "icons": [
+    {
+      "src": "./assets/coffee-saved.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
