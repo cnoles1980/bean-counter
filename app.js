@@ -45,8 +45,8 @@ nodes.undoButton.addEventListener("click", undoLastCup);
 nodes.resetButton.addEventListener("click", resetTracker);
 nodes.exportButton.addEventListener("click", exportBackup);
 nodes.importFile.addEventListener("change", importBackup);
-nodes.downloadButton.addEventListener("click", downloadBragShot);
-nodes.shareButton.addEventListener("click", shareBragText);
+nodes.downloadButton.addEventListener("click", downloadReceiptImage);
+nodes.shareButton.addEventListener("click", shareReceiptImage);
 nodes.shopPrice.addEventListener("change", saveSettingsFromInputs);
 nodes.homeCost.addEventListener("change", saveSettingsFromInputs);
 nodes.machineCost.addEventListener("change", saveSettingsFromInputs);
@@ -253,10 +253,22 @@ function render() {
             <strong>${achievement.title}</strong>
             <span>${achievement.detail}</span>
           </div>
+          <button class="secondary-button achievement-share" type="button" data-achievement-id="${achievement.id}" aria-label="Save ${achievement.title} achievement image">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M18 8a3 3 0 1 0-2.8-4" />
+              <path d="M6 14a3 3 0 1 0 2.8 4" />
+              <path d="m8.7 13.2 6.6 3.6" />
+              <path d="m15.3 7.2-6.6 3.6" />
+            </svg>
+          </button>
         </article>
       `;
     })
     .join("");
+
+  document.querySelectorAll(".achievement-share").forEach((button) => {
+    button.addEventListener("click", () => downloadAchievementImage(button.dataset.achievementId));
+  });
 }
 
 function getProgress(summary, nextAchievement) {
@@ -305,7 +317,41 @@ function calculateStreak(entries) {
   return streak;
 }
 
-async function downloadBragShot() {
+async function downloadReceiptImage() {
+  const blob = await createReceiptImageBlob();
+  downloadBlob(blob, "bean-counter-share-receipt.png");
+  showToast("Share PNG saved.");
+}
+
+async function shareReceiptImage() {
+  const summary = summarize();
+  const blob = await createReceiptImageBlob();
+  const file = new File([blob], "bean-counter-share-receipt.png", { type: "image/png" });
+  const text = `Bean Counter: ${summary.cups} coffees skipped, ${formatMoney(summary.net)} net savings.`;
+
+  if (navigator.canShare?.({ files: [file] }) && navigator.share) {
+    try {
+      await navigator.share({ title: "Bean Counter", text, files: [file] });
+      return;
+    } catch (error) {
+      if (error.name === "AbortError") return;
+    }
+  }
+
+  if (navigator.share) {
+    try {
+      await navigator.share({ title: "Bean Counter", text });
+      return;
+    } catch (error) {
+      if (error.name === "AbortError") return;
+    }
+  }
+
+  await navigator.clipboard.writeText(text);
+  showToast("Share text copied.");
+}
+
+async function createReceiptImageBlob() {
   const summary = summarize();
   const canvas = document.createElement("canvas");
   canvas.width = 1080;
@@ -364,28 +410,72 @@ async function downloadBragShot() {
   ctx.font = "800 34px Arial";
   ctx.fillText(new Intl.DateTimeFormat(undefined, { month: "long", day: "numeric", year: "numeric" }).format(new Date()), 138, 930);
 
-  const link = document.createElement("a");
-  link.download = "bean-counter-share-receipt.png";
-  link.href = canvas.toDataURL("image/png");
-  link.click();
-  showToast("Share PNG saved.");
+  return canvasToBlob(canvas);
 }
 
-async function shareBragText() {
+async function downloadAchievementImage(achievementId) {
   const summary = summarize();
-  const text = `Bean Counter: ${summary.cups} coffees skipped, ${formatMoney(summary.net)} net savings.`;
+  const achievement = achievements.find((item) => item.id === achievementId);
+  if (!achievement || !summary.unlocked.some((item) => item.id === achievementId)) return;
 
-  if (navigator.share) {
-    try {
-      await navigator.share({ title: "Bean Counter", text });
-      return;
-    } catch (error) {
-      if (error.name === "AbortError") return;
-    }
-  }
+  const blob = await createAchievementImageBlob(achievement, summary);
+  const filename = `bean-counter-${achievement.id}.png`;
+  downloadBlob(blob, filename);
+  showToast("Achievement PNG saved.");
+}
 
-  await navigator.clipboard.writeText(text);
-  showToast("Share text copied.");
+async function createAchievementImageBlob(achievement, summary) {
+  const canvas = document.createElement("canvas");
+  canvas.width = 1080;
+  canvas.height = 1080;
+  const ctx = canvas.getContext("2d");
+  const logo = await loadImage("./assets/bean-counter-logo.png");
+  const palette = {
+    cream: "rgb(248, 244, 225)",
+    tan: "rgb(175, 143, 111)",
+    coffee: "rgb(116, 81, 45)",
+    espresso: "rgb(84, 51, 16)",
+    paper: "rgb(255, 252, 238)",
+  };
+
+  ctx.fillStyle = palette.cream;
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  drawReceiptPattern(ctx, palette);
+  ctx.fillStyle = palette.paper;
+  roundRect(ctx, 86, 92, 908, 896, 34);
+  ctx.fill();
+  ctx.strokeStyle = "rgba(84, 51, 16, 0.22)";
+  ctx.lineWidth = 4;
+  ctx.stroke();
+
+  ctx.save();
+  roundRect(ctx, 138, 142, 132, 132, 30);
+  ctx.clip();
+  ctx.drawImage(logo, 138, 142, 132, 132);
+  ctx.restore();
+
+  ctx.fillStyle = palette.coffee;
+  ctx.font = "800 34px Arial";
+  ctx.fillText("achievement unlocked", 306, 178);
+  ctx.fillStyle = palette.espresso;
+  ctx.font = "800 76px Arial";
+  wrapCanvasText(ctx, achievement.title, 306, 252, 600, 84);
+
+  ctx.fillStyle = palette.espresso;
+  ctx.font = "700 220px Georgia";
+  ctx.textAlign = "center";
+  ctx.fillText(achievement.icon, 540, 550);
+  ctx.textAlign = "left";
+
+  ctx.fillStyle = palette.coffee;
+  ctx.font = "800 44px Arial";
+  wrapCanvasText(ctx, achievement.detail, 164, 654, 760, 54);
+
+  drawPill(ctx, 164, 784, `${summary.cups} coffees skipped`, palette);
+  drawPill(ctx, 164, 874, `${formatMoney(summary.net)} net savings`, palette);
+  drawBeans(ctx, 795, 772, palette);
+
+  return canvasToBlob(canvas);
 }
 
 function roundRect(ctx, x, y, width, height, radius) {
@@ -405,6 +495,41 @@ function drawPill(ctx, x, y, text, palette) {
   ctx.fillStyle = palette.espresso;
   ctx.font = "800 34px Arial";
   ctx.fillText(text, x + 30, y - 4);
+}
+
+function downloadBlob(blob, filename) {
+  const link = document.createElement("a");
+  link.download = filename;
+  link.href = URL.createObjectURL(blob);
+  link.click();
+  URL.revokeObjectURL(link.href);
+}
+
+function canvasToBlob(canvas) {
+  return new Promise((resolve) => {
+    canvas.toBlob((blob) => resolve(blob), "image/png");
+  });
+}
+
+function wrapCanvasText(ctx, text, x, y, maxWidth, lineHeight) {
+  const words = text.split(" ");
+  let line = "";
+  let cursorY = y;
+
+  words.forEach((word, index) => {
+    const testLine = line ? `${line} ${word}` : word;
+    if (ctx.measureText(testLine).width > maxWidth && line) {
+      ctx.fillText(line, x, cursorY);
+      line = word;
+      cursorY += lineHeight;
+    } else {
+      line = testLine;
+    }
+
+    if (index === words.length - 1) {
+      ctx.fillText(line, x, cursorY);
+    }
+  });
 }
 
 function drawReceiptPattern(ctx, palette) {
