@@ -74,6 +74,8 @@ button {
 }
 
 .brand-mark {
+  width: 48px;
+  height: 48px;
   overflow: hidden;
   border: 1px solid rgba(84, 51, 16, 0.22);
   background: var(--cream);
@@ -510,8 +512,8 @@ h2 {
 .brag-logo {
   position: relative;
   z-index: 1;
-  width: 58px;
-  height: 58px;
+  width: 74px;
+  height: 74px;
   margin-bottom: 14px;
 }
 

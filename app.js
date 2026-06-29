@@ -305,12 +305,13 @@ function calculateStreak(entries) {
   return streak;
 }
 
-function downloadBragShot() {
+async function downloadBragShot() {
   const summary = summarize();
   const canvas = document.createElement("canvas");
   canvas.width = 1080;
   canvas.height = 1080;
   const ctx = canvas.getContext("2d");
+  const logo = await loadImage("./assets/bean-counter-logo.png");
   const palette = {
     cream: "rgb(248, 244, 225)",
     tan: "rgb(175, 143, 111)",
@@ -329,7 +330,14 @@ function downloadBragShot() {
   ctx.lineWidth = 4;
   ctx.stroke();
 
-  drawLogoMark(ctx, 140, 142, 118, palette);
+  ctx.save();
+  ctx.shadowColor = "rgba(84, 51, 16, 0.18)";
+  ctx.shadowBlur = 18;
+  ctx.shadowOffsetY = 8;
+  roundRect(ctx, 132, 132, 136, 136, 30);
+  ctx.clip();
+  ctx.drawImage(logo, 132, 132, 136, 136);
+  ctx.restore();
 
   ctx.fillStyle = palette.espresso;
   ctx.font = "800 58px Arial";
@@ -413,49 +421,6 @@ function drawReceiptPattern(ctx, palette) {
   ctx.restore();
 }
 
-function drawLogoMark(ctx, x, y, size, palette) {
-  const center = size / 2;
-  ctx.save();
-  ctx.translate(x, y);
-  ctx.fillStyle = palette.cream;
-  roundRect(ctx, 0, 0, size, size, 24);
-  ctx.fill();
-  ctx.strokeStyle = palette.espresso;
-  ctx.lineWidth = 7;
-  ctx.stroke();
-
-  ctx.strokeStyle = palette.espresso;
-  ctx.lineWidth = 5;
-  ctx.beginPath();
-  ctx.moveTo(22, 30);
-  ctx.lineTo(size - 22, 30);
-  ctx.stroke();
-
-  [34, center, size - 34].forEach((beadX, index) => {
-    ctx.fillStyle = index === 1 ? palette.coffee : palette.tan;
-    ctx.beginPath();
-    ctx.arc(beadX, 30, 10, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.stroke();
-  });
-
-  ctx.fillStyle = palette.paper;
-  ctx.strokeStyle = palette.espresso;
-  ctx.lineWidth = 7;
-  roundRect(ctx, 28, 46, 52, 42, 12);
-  ctx.fill();
-  ctx.stroke();
-  ctx.beginPath();
-  ctx.arc(84, 65, 14, -Math.PI / 2, Math.PI / 2);
-  ctx.stroke();
-
-  ctx.fillStyle = palette.espresso;
-  ctx.font = "700 42px Georgia";
-  ctx.textAlign = "center";
-  ctx.fillText("$", 54, 83);
-  ctx.restore();
-}
-
 function drawBeans(ctx, x, y, palette) {
   ctx.save();
   ctx.translate(x, y);
@@ -480,6 +445,15 @@ function drawBeans(ctx, x, y, palette) {
     ctx.restore();
   });
   ctx.restore();
+}
+
+function loadImage(src) {
+  return new Promise((resolve, reject) => {
+    const image = new Image();
+    image.onload = () => resolve(image);
+    image.onerror = reject;
+    image.src = src;
+  });
 }
 
 function setText(selector, text) {
